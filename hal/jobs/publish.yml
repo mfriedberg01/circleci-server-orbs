@@ -82,8 +82,8 @@ steps:
         name: 'Publish build to Hal'
         environment:
             - HAL_APP_ID: '<<parameters.hal-appid>>'
-            - HAL_ARTIFACT_PATH: 'build.<<parameters.artifact-compression>>'
-            - HAL_ARTIFACT_OBJECT: '/tmp/build.<<parameters.artifact-compression>>'
+            - HAL_ARTIFACT_OBJECT: 'build.<<parameters.artifact-compression>>'
+            - HAL_ARTIFACT_PATH: '/tmp/build.<<parameters.artifact-compression>>'
             - HAL_API_WAIT: '<<parameters.timeout-minutes>>'
             - HAL_OUTPUT_FILE: '<<parameters.job-file>>'
 
