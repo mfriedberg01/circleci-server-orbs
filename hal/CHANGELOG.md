@@ -44,6 +44,27 @@ All notable changes to this project will be documented in this file. The format 
   >                 artifact-path: './mybuildfiles'
   >                 artifact-compression: 'tgz'
   > ```
+- Added job: `hal/build`
+  > This job is used to start a build. Do not use if an artifact is need to be passed to Hal (Use `hal/publish`).
+  >
+  > Usage example:
+  >
+  > ```
+  > orbs:
+  >     hal: quickenloans/hal@x.y.z
+  > workflows:
+  >     my_example_pipeline:
+  >         jobs:
+  >             - hal/publish:
+  >                 requires: [ hal/checkout ]
+  >                 context: 'my_secrets'
+  >
+  >                 hal-appid: '000000'
+  >                 workspace-root: '.'        # Default value (can be deleted)
+  >                 job-file: '.hal_build_id'  # Default value (can be deleted)
+  >                 artifact-path: './mybuildfiles'
+  >                 artifact-compression: 'tgz'
+  > ```
 - Added command: `hal/install-certificates`
   > This command is used to install company certificates for access to APIs or Applications that use an Internal CA for SSL.
   >
