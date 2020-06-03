@@ -12,6 +12,10 @@ parameters:
         description: 'The maximum time in minutes to allow for the job to finish.'
         default: 10
         type: integer
+    environment:
+        description: 'Name or ID of a Hal environment. Leave blank to create an environment-independent build (default behavior).'
+        default: ''
+        type: string
 
     # File persistence
     attach-workspace:
@@ -80,16 +84,38 @@ steps:
         path: '/tmp/build.<<parameters.artifact-compression>>'
         destination: 'build.<<parameters.artifact-compression>>'
 
-    - run:
-        name: 'Publish build to Hal'
-        environment:
-            - HAL_APP_ID: '<<parameters.hal-appid>>'
-            - HAL_ARTIFACT_OBJECT: 'build.<<parameters.artifact-compression>>'
-            - HAL_ARTIFACT_PATH: '/tmp/build.<<parameters.artifact-compression>>'
-            - HAL_API_WAIT: '<<parameters.timeout-minutes>>'
-            - HAL_OUTPUT_FILE: '<<parameters.job-file>>'
 
-        command: 'publish-build-to-hal'
+
+    - when:
+        condition: '<< parameters.environment >>'
+        steps:
+            - run:
+                name: 'Publish build to Hal (<< parameters.environment >>)'
+                environment:
+                    - HAL_APP_ID: '<<parameters.hal-appid>>'
+                    - HAL_ARTIFACT_OBJECT: 'build.<<parameters.artifact-compression>>'
+                    - HAL_ARTIFACT_PATH: '/tmp/build.<<parameters.artifact-compression>>'
+                    - HAL_API_WAIT: '<<parameters.timeout-minutes>>'
+                    - HAL_OUTPUT_FILE: '<<parameters.job-file>>'
+
+                command: |
+                    publish-build-to-hal \
+                        --environment "<< parameters.environment >>"
+
+    - unless:
+        condition: '<< parameters.environment >>'
+        steps:
+            - run:
+                name: 'Publish build to Hal (any environment)'
+                environment:
+                    - HAL_APP_ID: '<<parameters.hal-appid>>'
+                    - HAL_ARTIFACT_OBJECT: 'build.<<parameters.artifact-compression>>'
+                    - HAL_ARTIFACT_PATH: '/tmp/build.<<parameters.artifact-compression>>'
+                    - HAL_API_WAIT: '<<parameters.timeout-minutes>>'
+                    - HAL_OUTPUT_FILE: '<<parameters.job-file>>'
+
+                command: |
+                    publish-build-to-hal
 
     - when:
         condition: << parameters.persist-job-to-workspace >>

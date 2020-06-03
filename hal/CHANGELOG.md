@@ -3,7 +3,15 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/).
 > Sections: (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`, `API Changes`, `Entity Changes`)
 
-## [dev] - 2020-06-XX
+## [unreleased] - 2020-06-XX
+
+### Added
+- Added `environment` parameter to the `hal/build` and `hal/publish` jobs.
+  > This parameter can be used to specify an environment ID or name. The default behavior
+  > is to create a build compatible with any environment. When this is used the build can only be deployed
+  > to this environment.
+
+## [0.1.0] - 2020-06-03
 
 ### Added
 - Added job: `hal/checkout`
