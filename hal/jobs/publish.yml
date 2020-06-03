@@ -1,6 +1,8 @@
 description: |
     Use this job to publish an artifact from CircleCI to the Hal Deployment Portal.
 
+    This job requires HAL_API_TOKEN to be set in a context variable.
+
 parameters:
     # Hal settings
     hal-appid:
