@@ -68,22 +68,22 @@ steps:
         name: 'Pack artifact'
         command: 'pack-build-to-zip'
         environment:
-            - HAL_DIST_DIR:      '<<artifact.path>>'
-            - HAL_ARTIFACT:      'build.<<artifact.compression>>'
-            - HAL_ARTIFACT_PATH: '/tmp/build.<<artifact.compression>>'
-            - HAL_COMPRESSION:   '<<artifact.compression>>'
+            - HAL_DIST_DIR:      '<<parameters.artifact-path>>'
+            - HAL_ARTIFACT:      'build.<<parameters.artifact-compression>>'
+            - HAL_ARTIFACT_PATH: '/tmp/build.<<parameters.artifact-compression>>'
+            - HAL_COMPRESSION:   '<<parameters.artifact-compression>>'
             - HAL_REMOVE_GIT:    '1'
 
     - store_artifacts:
-        path: '/tmp/build.<<artifact.compression>>'
-        destination: 'build.<<artifact.compression>>'
+        path: '/tmp/build.<<parameters.artifact-compression>>'
+        destination: 'build.<<parameters.artifact-compression>>'
 
     - run:
         name: 'Publish build to Hal'
         environment:
             - HAL_APP_ID: '<<parameters.hal-appid>>'
-            - HAL_ARTIFACT_PATH: 'build.<<artifact.compression>>'
-            - HAL_ARTIFACT_OBJECT: '/tmp/build.<<artifact.compression>>'
+            - HAL_ARTIFACT_PATH: 'build.<<parameters.artifact-compression>>'
+            - HAL_ARTIFACT_OBJECT: '/tmp/build.<<parameters.artifact-compression>>'
             - HAL_API_WAIT: '<<parameters.timeout-minutes>>'
             - HAL_OUTPUT_FILE: '<<parameters.job-file>>'
 
