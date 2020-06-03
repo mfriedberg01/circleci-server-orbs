@@ -3,12 +3,12 @@ description: 'Linux executor containing integration scripts for the Hal Deployme
 parameters:
     repository:
         description: 'Docker registry/repository to use.'
-        type: string
         default: 'qldockerdtr.rockfin.com/circleci/hal-integration'
+        type: string
     tag:
         description: 'Docker tag to use.'
-        type: string
         default: 'hal-publisher'
+        type: string
 
 docker:
     - image: '<<parameters.repository>>:<<parameters.tag>>'

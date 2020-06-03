@@ -10,8 +10,8 @@ parameters:
         type: string
     timeout-minutes:
         description: 'The maximum time in minutes to allow for the job to finish.'
-        default: '10'
-        type: string
+        default: 10
+        type: integer
 
     # File persistence
     attach-workspace:

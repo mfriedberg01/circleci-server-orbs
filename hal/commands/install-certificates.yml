@@ -7,8 +7,8 @@ description: >
 parameters:
     installer-url:
         description: 'URL of bash install script'
-        type: string
         default: 'https://tools.circleci.foc.zone/install-certs'
+        type: string
 
 steps:
     - run:

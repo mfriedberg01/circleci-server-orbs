@@ -5,8 +5,8 @@ description: |
 parameters:
     tag:
         description: 'Docker tag to use.'
-        type: string
         default: '2020.06'
+        type: string
 
 docker:
     - image: 'cimg/base:<<parameters.tag>>'
