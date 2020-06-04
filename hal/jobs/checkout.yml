@@ -9,7 +9,7 @@ parameters:
         description: |
             Workspace root path that is either an absolute path or a path relative to the working directory.
             Defaults to "." (the working directory)
-        default: workspace
+        default: '.'
         type: string
 
     persist-path:
