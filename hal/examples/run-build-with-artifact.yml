@@ -19,7 +19,7 @@ usage:
                     requires: [ hal/checkout ]
                     context: 'my_secrets'
 
-                    hal-appid: '000000'
+                    hal-appid: 'XXXXXX'
                     workspace-root: '.'       # Default value (can be deleted)
                     job-file: '.hal_build_id' # Default value (can be deleted)
                     artifact-path: './mybuildfiles'

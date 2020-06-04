@@ -20,7 +20,7 @@ usage:
                     requires: [ hal/checkout ]
                     context: 'my_secrets'
 
-                    hal-appid: '000000'
+                    hal-appid: 'XXXXXX'
                     environment: 'test'
 
                     workspace-root: '.'       # Default value (can be deleted)

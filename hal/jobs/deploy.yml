@@ -10,7 +10,7 @@ parameters:
         type: string
 
     hal-appid:
-        description: 'Hal Application ID. Required if deploying without a build.'
+        description: 'Hal Application ID. Required if deploying without a build (By setting the "no-build" variable).'
         default: ''
         type: string
     no-build:
@@ -27,6 +27,11 @@ parameters:
         description: 'Wait for concurrent jobs to finish running.'
         default: true
         type: boolean
+
+    arguments:
+        description: 'If you wish to pass any additional arguments to the command'
+        type: string
+        default: ''
 
     # File persistence
     attach-workspace:
@@ -88,7 +93,7 @@ steps:
                     - HAL_NO_BUILD: '1'
 
                 command: |
-                    deploy-to-hal
+                    deploy-to-hal<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
 
     - unless:
         condition: '<< parameters.no-build >>'
@@ -103,7 +108,7 @@ steps:
                     - HAL_BUILD_FILE: '<<parameters.build-file>>'
 
                 command: |
-                    deploy-to-hal
+                    deploy-to-hal<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
 
     - when:
         condition: << parameters.persist-job-to-workspace >>

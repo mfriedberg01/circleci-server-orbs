@@ -19,6 +19,11 @@ parameters:
         default: ''
         type: string
 
+    arguments:
+        description: 'If you wish to pass any additional arguments to the command'
+        type: string
+        default: ''
+
     # File persistence
     workspace-root:
         description: |
@@ -52,7 +57,7 @@ steps:
 
                 command: |
                     publish-build-to-hal \
-                        --environment "<< parameters.environment >>"
+                        --environment "<< parameters.environment >>"<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
 
     - unless:
         condition: '<< parameters.environment >>'
@@ -66,7 +71,7 @@ steps:
                     - HAL_OUTPUT_FILE: '<<parameters.job-file>>'
 
                 command: |
-                    publish-build-to-hal
+                    publish-build-to-hal<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
 
     - when:
         condition: << parameters.persist-job-to-workspace >>
