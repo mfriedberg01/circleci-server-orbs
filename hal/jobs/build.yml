@@ -23,6 +23,10 @@ parameters:
         description: 'If you wish to pass any additional arguments to the command'
         type: string
         default: ''
+    skip-job-var:
+        description: 'Environment variable that if set to "1" will skip calls to Hal. Used to control conditional deploys (Useful for monorepos)'
+        default: HAL_SKIP_JOB
+        type: env_var_name
 
     # File persistence
     workspace-root:
@@ -40,10 +44,18 @@ parameters:
         default: '.hal_build_id'
         type: string
 
+    # Additional steps
+    before-steps:
+        description: 'Steps that will be executed after workspace has been attached, but before Hal API call.'
+        type: steps
+        default: []
+
 executor:
     name: default
 
 steps:
+    - steps: << parameters.before-steps >>
+
     - when:
         condition: '<< parameters.environment >>'
         steps:
@@ -56,6 +68,13 @@ steps:
                     - HAL_OUTPUT_FILE: '<<parameters.job-file>>'
 
                 command: |
+                    if [[ "${<< parameters.skip-job-var >>}" == "1" ]] ; then
+                        # Ensure there is a file (even if empty), otherwise persist step will fail.
+                        touch "<< parameters.job-file >>"
+                        echo "Skipping..."
+                        exit 0
+                    fi
+
                     publish-build-to-hal \
                         --environment "<< parameters.environment >>"<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
 
@@ -71,6 +90,13 @@ steps:
                     - HAL_OUTPUT_FILE: '<<parameters.job-file>>'
 
                 command: |
+                    if [[ "${<< parameters.skip-job-var >>}" == "1" ]] ; then
+                        # Ensure there is a file (even if empty), otherwise persist step will fail.
+                        touch "<< parameters.job-file >>"
+                        echo "Skipping..."
+                        exit 0
+                    fi
+
                     publish-build-to-hal<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
 
     - when:

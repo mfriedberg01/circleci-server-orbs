@@ -32,6 +32,10 @@ parameters:
         description: 'If you wish to pass any additional arguments to the command'
         type: string
         default: ''
+    skip-job-var:
+        description: 'Environment variable that if set to "1" will skip calls to Hal. Used to control conditional deploys (Useful for monorepos)'
+        default: HAL_SKIP_JOB
+        type: env_var_name
 
     # File persistence
     attach-workspace:
@@ -57,6 +61,12 @@ parameters:
         default: '.hal_deploy_id'
         type: string
 
+    # Additional steps
+    before-steps:
+        description: 'Steps that will be executed after workspace has been attached, but before Hal API call.'
+        type: steps
+        default: []
+
 executor:
     name: default
 
@@ -66,6 +76,8 @@ steps:
         steps:
             - attach_workspace:
                 at: << parameters.workspace-root >>
+
+    - steps: << parameters.before-steps >>
 
     - when:
         condition: '<< parameters.wait-for-running-jobs >>'
@@ -78,6 +90,11 @@ steps:
                     - HAL_API_WAIT: '<<parameters.timeout-minutes>>'
 
                 command: |
+                    if [[ "${<< parameters.skip-job-var >>}" == "1" ]] ; then
+                        echo "Skipping..."
+                        exit 0
+                    fi
+
                     wait-for-running-job
 
     - when:
@@ -93,6 +110,13 @@ steps:
                     - HAL_NO_BUILD: '1'
 
                 command: |
+                    if [[ "${<< parameters.skip-job-var >>}" == "1" ]] ; then
+                        # Ensure there is a file (even if empty), otherwise persist step will fail.
+                        touch "<< parameters.job-file >>"
+                        echo "Skipping..."
+                        exit 0
+                    fi
+
                     deploy-to-hal<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
 
     - unless:
@@ -108,6 +132,13 @@ steps:
                     - HAL_BUILD_FILE: '<<parameters.build-file>>'
 
                 command: |
+                    if [[ "${<< parameters.skip-job-var >>}" == "1" ]] ; then
+                        # Ensure there is a file (even if empty), otherwise persist step will fail.
+                        touch "<< parameters.job-file >>"
+                        echo "Skipping..."
+                        exit 0
+                    fi
+
                     deploy-to-hal<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
 
     - when:

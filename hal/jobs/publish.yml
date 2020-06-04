@@ -21,6 +21,10 @@ parameters:
         description: 'If you wish to pass any additional arguments to the command'
         type: string
         default: ''
+    skip-job-var:
+        description: 'Environment variable that if set to "1" will skip calls to Hal. Used to control conditional deploys (Useful for monorepos)'
+        default: HAL_SKIP_JOB
+        type: env_var_name
 
     # File persistence
     attach-workspace:
@@ -53,6 +57,12 @@ parameters:
         type: enum
         enum: ['zip', 'tgz']
 
+    # Additional steps
+    before-steps:
+        description: 'Steps that will be executed after workspace has been attached, but before Hal API call.'
+        type: steps
+        default: []
+
     # Executor options
     # executor-repository:
     #     description: '[DO NOT CHANGE] Docker registry/repository to use for the executor.'
@@ -75,9 +85,10 @@ steps:
             - attach_workspace:
                 at: << parameters.workspace-root >>
 
+    - steps: << parameters.before-steps >>
+
     - run:
         name: 'Pack artifact'
-        command: 'pack-build-to-zip'
         environment:
             - HAL_DIST_DIR:      '<<parameters.artifact-path>>'
             - HAL_ARTIFACT:      'build.<<parameters.artifact-compression>>'
@@ -85,11 +96,17 @@ steps:
             - HAL_COMPRESSION:   '<<parameters.artifact-compression>>'
             - HAL_REMOVE_GIT:    '1'
 
+        command: |
+            if [[ "${<< parameters.skip-job-var >>}" == "1" ]] ; then
+                echo "Skipping..."
+                exit 0
+            fi
+
+            pack-build-to-zip
+
     - store_artifacts:
         path: '/tmp/build.<<parameters.artifact-compression>>'
         destination: 'build.<<parameters.artifact-compression>>'
-
-
 
     - when:
         condition: '<< parameters.environment >>'
@@ -104,6 +121,11 @@ steps:
                     - HAL_OUTPUT_FILE: '<<parameters.job-file>>'
 
                 command: |
+                    if [[ "${<< parameters.skip-job-var >>}" == "1" ]] ; then
+                        echo "Skipping..."
+                        exit 0
+                    fi
+
                     publish-build-to-hal \
                         --environment "<< parameters.environment >>"<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
 
@@ -120,6 +142,11 @@ steps:
                     - HAL_OUTPUT_FILE: '<<parameters.job-file>>'
 
                 command: |
+                    if [[ "${<< parameters.skip-job-var >>}" == "1" ]] ; then
+                        echo "Skipping..."
+                        exit 0
+                    fi
+
                     publish-build-to-hal<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
 
     - when:
