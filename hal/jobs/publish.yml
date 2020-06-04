@@ -122,6 +122,8 @@ steps:
 
                 command: |
                     if [[ "${<< parameters.skip-job-var >>}" == "1" ]] ; then
+                        # Ensure there is a file (even if empty), otherwise persist step will fail.
+                        touch "<< parameters.job-file >>"
                         echo "Skipping..."
                         exit 0
                     fi
@@ -143,6 +145,8 @@ steps:
 
                 command: |
                     if [[ "${<< parameters.skip-job-var >>}" == "1" ]] ; then
+                        # Ensure there is a file (even if empty), otherwise persist step will fail.
+                        touch "<< parameters.job-file >>"
                         echo "Skipping..."
                         exit 0
                     fi

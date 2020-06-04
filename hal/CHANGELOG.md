@@ -3,13 +3,48 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/).
 > Sections: (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`, `API Changes`, `Entity Changes`)
 
-## [unreleased] - 2020-06-XX
+## [0.3.0] - 2020-06-04
+
+- Added `skip-job-var` parameters to the `hal/build`, `hal/publish`, and `hal/deploy` jobs.
+  > Environment variable that jobs in this Orb detect. If set to `1` they will skip (silently with exit code 0) their
+  > steps.
+- Added `before-steps` parameters to the `hal/build`, `hal/publish`, and `hal/deploy` jobs.
+  > Run any CircleCI steps after workspace attachment, but before the Hal API is called. Typically used to determine
+  > if Hal steps should be skipped (by setting the environment variable `skip-job-var`.
+
+## [0.2.1] - 2020-06-04
+
+- Added `arguments` parameters to the `hal/build`, `hal/publish`, and `hal/deploy` jobs.
+  > Used to pass arbitrary extra arguments to the hal scripts. Should be used for job parameters (metadata).
+
+## [0.2.0] - 2020-06-04
 
 ### Added
 - Added `environment` parameter to the `hal/build` and `hal/publish` jobs.
   > This parameter can be used to specify an environment ID or name. The default behavior
   > is to create a build compatible with any environment. When this is used the build can only be deployed
   > to this environment.
+- Added job: `hal/deploy`
+  > This is job can trigger a deployment to Hal. It is compatible with the `hal/publish` and `hal/build` steps
+  > to deploy a build to an environment (deployment setting). It can also be used to deploy to a target that
+  > does not require a build.
+  >
+  > Usage example:
+  >
+  > ```
+  > orbs:
+  >     hal: quickenloans/hal@x.y.z
+  > workflows:
+  >     my_example_pipeline:
+  >         jobs:
+  >             - hal/deploy:
+  >                 hal-appid: 'XXXXXX'
+  >                 deploy-setting-id: 'YYYYYY'
+  >                 wait-for-running-jobs: true # Default value (can be deleted)
+  >                 workspace-root: '.'         # Default value (can be deleted)
+  >                 job-file: '.hal_deploy_id'  # Default value (can be deleted)
+  >                 arguments: '--meta-myvar1=example1 --meta-myvar2=example2'
+  > ```
 
 ## [0.1.0] - 2020-06-03
 
