@@ -1,5 +1,5 @@
 description: |
-    Starting a build job in the Hal Deployment Portal.
+    Deploy a build artifact to a deployment setting in the Hal.
 
 usage:
     version: 2.1
@@ -18,6 +18,16 @@ usage:
                     requires: [ hal/checkout ]
                     context: 'my_secrets'
 
-                    hal-appid: '000000'
+                    hal-appid: 'XXXXXX'
                     workspace-root: '.'       # Default value (can be deleted)
                     job-file: '.hal_build_id' # Default value (can be deleted)
+
+                - hal/deploy:
+                    requires: [ hal/publish ]
+                    context: 'my_secrets'
+
+                    deploy-setting-id: 'YYYYYY'
+                    wait-for-running-jobs: true # Default value (can be deleted)
+                    workspace-root: '.'         # Default value (can be deleted)
+                    build-file: '.hal_build_id' # Default value (can be deleted)
+                    job-file: '.hal_deploy_id'  # Default value (can be deleted)

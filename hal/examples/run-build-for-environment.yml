@@ -23,7 +23,7 @@ usage:
                     hal-appid: '000000'
                     environment: 'test'
 
-                    workspace-root: '.'        # Default value (can be deleted)
-                    job-file: '.hal_build_id'  # Default value (can be deleted)
+                    workspace-root: '.'       # Default value (can be deleted)
+                    job-file: '.hal_build_id' # Default value (can be deleted)
                     artifact-path: './mybuildfiles'
                     artifact-compression: 'tgz'
