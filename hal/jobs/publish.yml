@@ -48,7 +48,7 @@ parameters:
 
     # Artifact options
     artifact-path:
-        description: 'Path to files to pack up into the build artifact. Defaults to the working directory.'
+        description: 'Path to files to pack up into the build artifact. Defaults to the working directory. Ignored if "artifact-file" is used.'
         default: '.'
         type: string
     artifact-compression:
@@ -56,12 +56,17 @@ parameters:
         default: 'zip'
         type: enum
         enum: ['zip', 'tgz']
+    artifact-file:
+        description: 'Specify an already built artifact in zip or tgz format. Ignored if "artifact-path" is used.'
+        default: ''
+        type: string
 
     # Additional steps
     before-steps:
         description: 'Steps that will be executed after workspace has been attached, but before Hal API call.'
         type: steps
         default: []
+
 
     # Executor options
     # executor-repository:
@@ -102,7 +107,18 @@ steps:
                 exit 0
             fi
 
-            pack-build-to-zip
+            if [[ -z "<< parameters.artifact-file >>" ]] ; then
+                pack-build-to-zip
+                exit 0
+            fi
+
+            # Move artifact into the source location
+            if [ ! -f "<< parameters.artifact-file >>" ] ; then
+                echo "Artifact not found: \"<< parameters.artifact-file >>\""
+                exit 1
+            fi
+
+            mv "<< parameters.artifact-file >>" "${HAL_ARTIFACT_PATH}"
 
     - store_artifacts:
         path: '/tmp/build.<<parameters.artifact-compression>>'

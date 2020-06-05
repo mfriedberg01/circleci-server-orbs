@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/).
 > Sections: (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`, `API Changes`, `Entity Changes`)
 
+## [0.4.0] - 2020-06-05
+
+- Added `artifact-file` parameter to the `hal/publish` job.
+  > Use `artifact-file` instead of `artifact-path` if you build your artfact zip or tgz through other tooling.
+
 ## [0.3.0] - 2020-06-04
 
 - Added `skip-job-var` parameters to the `hal/build`, `hal/publish`, and `hal/deploy` jobs.
