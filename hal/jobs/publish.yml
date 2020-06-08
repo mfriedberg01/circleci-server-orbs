@@ -25,6 +25,10 @@ parameters:
         description: 'Environment variable that if set to "1" will skip calls to Hal. Used to control conditional deploys (Useful for monorepos)'
         default: HAL_SKIP_JOB
         type: env_var_name
+    api-token-var:
+        description: 'Environment variable that is read for the Hal API token.'
+        default: HAL_API_TOKEN
+        type: env_var_name
 
     # File persistence
     attach-workspace:
@@ -66,7 +70,6 @@ parameters:
         description: 'Steps that will be executed after workspace has been attached, but before Hal API call.'
         type: steps
         default: []
-
 
     # Executor options
     # executor-repository:
@@ -144,6 +147,10 @@ steps:
                         exit 0
                     fi
 
+                    if [[ "${<< parameters.api-token-var >>}" != "HAL_API_TOKEN" ]] ; then
+                        echo "export HAL_API_TOKEN=${<< parameters.api-token-var >>}" >> $BASH_ENV
+                    fi
+
                     publish-build-to-hal \
                         --environment "<< parameters.environment >>"<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
 
@@ -165,6 +172,10 @@ steps:
                         touch "<< parameters.job-file >>"
                         echo "Skipping..."
                         exit 0
+                    fi
+
+                    if [[ "${<< parameters.api-token-var >>}" != "HAL_API_TOKEN" ]] ; then
+                        echo "export HAL_API_TOKEN=${<< parameters.api-token-var >>}" >> $BASH_ENV
                     fi
 
                     publish-build-to-hal<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>

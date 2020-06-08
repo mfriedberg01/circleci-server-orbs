@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/).
 > Sections: (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`, `API Changes`, `Entity Changes`)
 
+## [0.5.0] - 2020-06-08
+
+- Added `api-token-var` parameter to the `hal/build`, `hal/publish`, and `hal/deploy` jobs.
+  > This parameter can be used to customize the environment variable used for the api token.
+
 ## [0.4.0] - 2020-06-05
 
 - Added `artifact-file` parameter to the `hal/publish` job.
