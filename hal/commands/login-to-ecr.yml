@@ -1,0 +1,56 @@
+description: >
+    Generate an authentication token and log into ECR.
+
+parameters:
+    generator-endpoint:
+        description: 'Generate Docker Credentials Endpoint'
+        type: string
+
+    api-token-var:
+        description: 'Environment variable that is read for the Hal API token.'
+        default: HAL_API_TOKEN
+        type: env_var_name
+
+    environment:
+        description: 'ID of the environment'
+        type: string
+
+    region:
+        description: 'AWS region'
+        type: string
+
+steps:
+  - run:
+      name: Install jq
+      command: |
+          if command -v jq >> /dev/null 2>&1; then
+              echo "jq is already installed..."
+          else
+              if command -v apt-get >> /dev/null 2>&1; then
+                  sudo_me="sudo "
+                  if [ "$(whoami)" == "root" ] ; then
+                    sudo_me=""
+                  fi
+
+                  ${sudo_me} apt-get update
+                  ${sudo_me} apt-get install jq -y
+              else
+                  echo "jq is required. Please install it before running this step."
+                  exit 1
+              fi
+          fi
+
+  - run:
+      name: 'Generates Docker Credentials'
+      command: |
+          if [[ "${<< parameters.api-token-var >>}" != "HAL_API_TOKEN" ]] ; then
+              export HAL_API_TOKEN="${<< parameters.api-token-var >>}"
+          fi
+
+          read endpoint token < <(echo $(curl --request POST \
+          "<< parameters.generator-url >>?environment=<< parameters.environment >>&region=<< parameters.region >>" \
+          --header "Authorization: token ${HAL_API_TOKEN}" | jq -r '.proxy_endpoint, .authorization_token' ))
+
+          echo "${token}" | docker login \
+            --username AWS \
+            --password-stdin "${endpoint}"
