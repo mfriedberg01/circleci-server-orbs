@@ -6,7 +6,7 @@ parameters:
         description: 'ID of the Hal organization the ECR repository belongs to.'
         type: string
     environment:
-        description: 'Environment ID or Name the desired AWS account.'
+        description: 'Environment ID or Name that the desired AWS account belongs to.'
         type: string
     region:
         description: 'AWS region to authenticate with.'
