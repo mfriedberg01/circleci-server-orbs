@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/).
 > Sections: (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`, `API Changes`, `Entity Changes`)
 
+## [0.6.0] - 2020-10-26
+
+### Added
+- Added command: `hal/login-to-ecr`
+  > This command is used to sign into AWS ECR with `docker login` using credentials for Hal for an Hal organization.
+  >
+  > Usage example:
+  >
+  > ```
+  > orbs:
+  >     hal: quickenloans/hal@x.y.z
+  > jobs:
+  >     my_example_job:
+  >         steps:
+  >             - hal/install-certificiates
+  > ```
+
+
 ## [0.5.0] - 2020-06-08
 
 - Added `api-token-var` parameter to the `hal/build`, `hal/publish`, and `hal/deploy` jobs.

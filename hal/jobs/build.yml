@@ -79,7 +79,7 @@ steps:
                         exit 0
                     fi
 
-                    if [[ "${<< parameters.api-token-var >>}" != "HAL_API_TOKEN" ]] ; then
+                    if [[ "<< parameters.api-token-var >>" != "HAL_API_TOKEN" ]] ; then
                         echo "export HAL_API_TOKEN=${<< parameters.api-token-var >>}" >> $BASH_ENV
                     fi
 
@@ -105,7 +105,7 @@ steps:
                         exit 0
                     fi
 
-                    if [[ "${<< parameters.api-token-var >>}" != "HAL_API_TOKEN" ]] ; then
+                    if [[ "<< parameters.api-token-var >>" != "HAL_API_TOKEN" ]] ; then
                         echo "export HAL_API_TOKEN=${<< parameters.api-token-var >>}" >> $BASH_ENV
                     fi
 
