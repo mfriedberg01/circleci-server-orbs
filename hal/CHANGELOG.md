@@ -7,7 +7,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Added
 - Added command: `hal/login-to-ecr`
-  > This command is used to sign into AWS ECR with `docker login` using credentials for Hal for an Hal organization.
+  > This command is used to sign into AWS ECR with `docker login` using credentials for Hal for AWS accounts connected
+  > to an existing Hal organization.
   >
   > Usage example:
   >
@@ -16,8 +17,17 @@ All notable changes to this project will be documented in this file. The format 
   >     hal: quickenloans/hal@x.y.z
   > jobs:
   >     my_example_job:
+  >         environment:
+  >             HAL_ORGANIZATION: '0000'
+  >             ECR_REGION: 'us-east-1'
   >         steps:
-  >             - hal/install-certificiates
+  >             - setup_remote_docker:
+  >                 docker_layer_caching: true
+  >
+  >              - hal/login-to-ecr:
+  >                  organization: '$HAL_ORGANIZATION'
+  >                  environment: 'test'
+  >                  region: '$ECR_REGION'
   > ```
 
 
