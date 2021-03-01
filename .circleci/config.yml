@@ -1,0 +1,105 @@
+executor:
+    name: default
+    # tag: << parameters.executor-tag >>
+    # repository: << parameters.executor-repository >>
+
+steps:
+    - when:
+        condition: << parameters.attach-workspace >>
+        steps:
+            - attach_workspace:
+                at: << parameters.workspace-root >>
+
+    - steps: << parameters.before-steps >>
+
+    - run:
+        name: 'Pack artifact'
+        environment:
+            - HAL_DIST_DIR:      '<<parameters.artifact-path>>'
+            - HAL_ARTIFACT:      'build.<<parameters.artifact-compression>>'
+            - HAL_ARTIFACT_PATH: '/tmp/build.<<parameters.artifact-compression>>'
+            - HAL_COMPRESSION:   '<<parameters.artifact-compression>>'
+            - HAL_REMOVE_GIT:    '1'
+
+        command: |
+            if [[ "${<< parameters.skip-job-var >>}" == "1" ]] ; then
+                echo "Skipping..."
+                exit 0
+            fi
+
+            if [[ -z "<< parameters.artifact-file >>" ]] ; then
+                pack-build-to-zip
+                exit 0
+            fi
+
+            # Move artifact into the source location
+            if [ ! -f "<< parameters.artifact-file >>" ] ; then
+                echo "Artifact not found: \"<< parameters.artifact-file >>\""
+                exit 1
+            fi
+
+            mv "<< parameters.artifact-file >>" "${HAL_ARTIFACT_PATH}"
+
+    - store_artifacts:
+        path: '/tmp/build.<<parameters.artifact-compression>>'
+        destination: 'build.<<parameters.artifact-compression>>'
+
+    - when:
+        condition: '<< parameters.environment >>'
+        steps:
+            - run:
+                name: 'Publish build to Hal (<< parameters.environment >>)'
+                environment:
+                    - HAL_APP_ID: '<<parameters.hal-appid>>'
+                    - HAL_ARTIFACT_OBJECT: 'build.<<parameters.artifact-compression>>'
+                    - HAL_ARTIFACT_PATH: '/tmp/build.<<parameters.artifact-compression>>'
+                    - HAL_API_WAIT: '<<parameters.timeout-minutes>>'
+                    - HAL_OUTPUT_FILE: '<<parameters.job-file>>'
+
+                command: |
+                    if [[ "${<< parameters.skip-job-var >>}" == "1" ]] ; then
+                        # Ensure there is a file (even if empty), otherwise persist step will fail.
+                        touch "<< parameters.job-file >>"
+                        echo "Skipping..."
+                        exit 0
+                    fi
+
+                    if [[ "<< parameters.api-token-var >>" != "HAL_API_TOKEN" ]] ; then
+                        echo "export HAL_API_TOKEN=${<< parameters.api-token-var >>}" >> $BASH_ENV
+                    fi
+
+                    publish-build-to-hal \
+                        --environment "<< parameters.environment >>"<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
+
+    - unless:
+        condition: '<< parameters.environment >>'
+        steps:
+            - run:
+                name: 'Publish build to Hal (any environment)'
+                environment:
+                    - HAL_APP_ID: '<<parameters.hal-appid>>'
+                    - HAL_ARTIFACT_OBJECT: 'build.<<parameters.artifact-compression>>'
+                    - HAL_ARTIFACT_PATH: '/tmp/build.<<parameters.artifact-compression>>'
+                    - HAL_API_WAIT: '<<parameters.timeout-minutes>>'
+                    - HAL_OUTPUT_FILE: '<<parameters.job-file>>'
+
+                command: |
+                    if [[ "${<< parameters.skip-job-var >>}" == "1" ]] ; then
+                        # Ensure there is a file (even if empty), otherwise persist step will fail.
+                        touch "<< parameters.job-file >>"
+                        echo "Skipping..."
+                        exit 0
+                    fi
+
+                    if [[ "<< parameters.api-token-var >>" != "HAL_API_TOKEN" ]] ; then
+                        echo "export HAL_API_TOKEN=${<< parameters.api-token-var >>}" >> $BASH_ENV
+                    fi
+
+                    publish-build-to-hal<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
+
+    - when:
+        condition: << parameters.persist-job-to-workspace >>
+        steps:
+            - persist_to_workspace:
+                root: '<< parameters.workspace-root >>'
+                paths: [ << parameters.job-file >> ]
