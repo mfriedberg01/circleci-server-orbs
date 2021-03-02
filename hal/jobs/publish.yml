@@ -17,7 +17,7 @@ parameters:
         default: ''
         type: string
     from_deployment_setting:
-        description: 'ID of another deployment. Inherit saved parameters, secrets, and other settings from this deployment setting.'
+        description: 'Should that be ID of the deployment setting to use to import settings into this job. Inherit saved parameters, secrets, and other settings from this deployment setting.'
         default: ''
         type: string
 
