@@ -156,7 +156,7 @@ steps:
                     fi
 
                     publish-build-to-hal \
-                        <<# parameters.from_deployment_setting >> --from-setting << parameters.from_deployment_setting >> \ <</parameters.from_deployment_setting >>
+                        <<# parameters.from_deployment_setting >> --from-setting << parameters.from_deployment_setting >> \\<</parameters.from_deployment_setting >>
                         --environment "<< parameters.environment >>"<<# parameters.arguments >> << parameters.arguments >><</parameters.arguments >>
 
     - unless:
